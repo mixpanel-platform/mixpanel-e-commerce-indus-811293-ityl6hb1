@@ -86,7 +86,7 @@
             
             var id = 0;
             MP.api.jql(query).done(function(data){
-              var tree = {name: 'Spec', children: data}
+              var treeData = {name: 'Spec', children: data}
               debugger
               var tree = d3.layout.treelist()
                   .childIndent(10)
@@ -153,7 +153,7 @@
                       .style("opacity", 1);
                   nodeEls.exit().remove();
               }
-              render(tree, tree);
+              render(treeData, treeData);
           });
         </script>
     </body>

@@ -23,20 +23,6 @@
         .node .caret {
             font-size: 10px;
         }
-        .outer {
-            width: 400px;
-            height: 300px;
-            overflow: auto;
-        }
-        .inner {
-            width: 800px;
-            height: 600px;
-        }
-        tree {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
     </style>
     <script src="https://d3js.org/d3.v3.min.js"></script>
     <script src="treelist.js"></script>
@@ -110,6 +96,7 @@
               debugger
               var tree = d3.layout.treelist()
                   .childIndent(10)
+                  .style("overflow", "scroll")
                   .nodeHeight(30);
               var ul = d3.select("tree").append("ul").classed("treelist", "true");
 

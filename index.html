@@ -66,9 +66,9 @@
           return res;
         })
         .map(item => {
-          var res = []
+          var res = {}
           _.each(item.value, (propsDict, event) => {
-            res.push({
+            res = {
               name: event, 
               children: _.map(propsDict, (types, prop) => ({
                   name: prop, 

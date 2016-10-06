@@ -90,7 +90,7 @@
     <script type="application/javascript">
             var query = $('.query')
             var id = 0;
-            d3.json(MP.jql(query), function (err, data) {
+            d3.json(MP.api.jql(query), function (err, data) {
               debugger
                 var tree = d3.layout.treelist()
                     .childIndent(10)

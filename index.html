@@ -88,7 +88,7 @@
 
     </script>
     <script type="application/javascript">
-            var query = $('.query')
+            var query = $('.query').html()
             var id = 0;
             d3.json(MP.api.jql(query), function (err, data) {
               debugger

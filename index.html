@@ -24,7 +24,7 @@
         }
     </style>
     <script src="https://d3js.org/d3.v3.min.js"></script>
-    <script type="text/javascript" src="treelist.js"></script>
+    <script src="treelist.js"></script>
   </head>
   <body>
     <script id="query" type="jql">
@@ -85,7 +85,8 @@
             var query = $('#query').html()
             debugger
             var id = 0;
-            d3.json(MP.api.jql(query), function (err, data) {
+            MP.api.jql(query).done(function(data){
+            d3.json(data, function (err, data) {
               debugger
                 var tree = d3.layout.treelist()
                     .childIndent(10)
@@ -154,5 +155,6 @@
                 }
                 render(data, data);
             });
+          })
         </script>
     </body>

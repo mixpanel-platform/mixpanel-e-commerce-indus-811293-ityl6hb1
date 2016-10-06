@@ -66,16 +66,16 @@
           return res;
         })
         .map(item => {
-          var res = {name: 'Spec', children:[]}
+          var res = {}
           _.each(item.value, (propsDict, event) => {
-            res.children.push({
+            res = {
               name: event, 
               children: _.map(propsDict, (types, prop) => ({
                   name: prop, 
                   children:_.map(types, type => ({name:type}) )
                 })
               )
-            });
+            };
           });
           return res
         })

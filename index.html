@@ -5,13 +5,159 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/css/reset.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
+    <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+        <style>
+            .selected{
+                color: orange;
+            }
+            .node {
+                position: absolute;
+                list-style: none;
+                cursor: default;
+            }
+            .node span {
+                margin-right: 3px;
+            }
+            
+            .node .caret {
+                font-size: 10px;
+            }
+        </style>
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script type="text/javascript" src="treelist.js"></script>
   </head>
-  <body class="mixpanel-platform-body">
-    <h1>Hello, World!</h1>
-    <script>
-      // Run queries and display results here
+  <body>
+    <script id="query" type="jql">
+      var number_of_days = 30;
+      var library = 'iphone';
+      var default_props = {"$city":1,"$region":1,"mp_country_code":1,"$brand":1,"$bluetooth_version":1,"$device":1,"$os":1,"$app_release":1,"$app_version":1,"$carrier":1,"$lib_version":1,"$wifi":1,"$screen_width":1,"$screen_height":1,"$model":1,"$os_version":1,"$manufacturer":1,"$screen_dpi":1,"$has_telephone":1,"has_nfc":1,"$bluetooth_enabled":1,"$browser":1,"$initial_referrer":1,"$initial_referring_domain":1,"$referrer":1,"$referring_domain":1,"$browser_version":1,"mp_keyword":1,"$search_engine":1,"utm_source":1,"utm_medium":1,"utm_campaign":1,"utm_content":1,"utm_term":1,"$radio":1,"mp_device_model":1,"$google_play_services":1,"mp_lib":1,"campaign_id":1,"message_id":1,"message_subtype":1,"message_type":1,"$answer_count":1,"survey_id":1,"collection_id":1,"$survey_shown":1,"$watch_model":1,"$ios_ifa":1,"$current_url":1,"$duration":1,"$from_binding":1,"$experiments":1,"$import":1,"distinct_id":1,"time":1,"$has_nfc":1};
+      
+      
+      var default_events = {"$campaign_delivery":1,"$campaign_marked_spam":1,"$campaign_bounced":1,"$campaign_open":1,"$experiment_started":1,"$show_survey":1, "$campaign_recieved":1};
+      
+      var from_date = new Date(_.now() - (number_of_days * 24 * 60 * 60 * 1000)).toISOString().slice(0, -14);
+      function main() {
+        return Events({
+          from_date: from_date,
+          to_date: new Date().toISOString().slice(0, -14)  
+        })
+        // .filter(event => event.properties.mp_lib == library)
+        .filter(event => !default_events[event.name])
+        .groupBy(['name'], function(accums, events){
+          var res = {};
+          _.each(events, function(event) {
+            res[event.name] = res[event.name] || {};
+            _.each(event.properties, function(propVal, propName) {
+              if (!default_props[propName]) {
+                res[event.name][propName] = res[event.name][propName] || [];
+                res[event.name][propName] = _.union(res[event.name][propName], [typeof(propVal)]);
+              }
+            });
+          });
+          _.each(accums, function(accum) {
+            _.each(accum, function(propList, eventName) {
+              res[eventName] = res[eventName] || {};
+              _.each(propList, function(propTypes, propName) {
+                res[eventName][propName] = res[eventName][propName] || {};
+                res[eventName][propName] = _.union(res[eventName][propName], propTypes);
+              });
+            });
+          });
+          return res;
+        })
+        .map(item => {
+          var res = []
+          _.each(item.value, (propsDict, event) => {
+            res.push({
+              name: event, 
+              children: _.map(propsDict, (types, prop) => ({
+                  name: prop, 
+                  children:_.map(types, type => ({name:type}) )
+                })
+              )
+            })
+          })
+          return res
+        });
+      }
+
     </script>
-  </body>
-</html>
+    <script type="application/javascript">
+            var query = $('.query')
+            var id = 0;
+            d3.json(MP.jql(query), function (err, data) {
+              debugger
+                var tree = d3.layout.treelist()
+                    .childIndent(10)
+                    .nodeHeight(30);
+                var ul = d3.select("body").append("ul").classed("treelist", "true");
 
+                function render(data, parent) {
+                    var nodes = tree.nodes(data),
+                        duration = 250;
+                    function toggleChildren(d) {
+                        if (d.children) {
+                            d._children = d.children;
+                            d.children = null;
+                        } else if (d._children) {
+                            d.children = d._children;
+                            d._children = null;
+                        }
+                    }
 
+                    var nodeEls = ul.selectAll("li.node").data(nodes, function (d) {
+                        d.id = d.id || ++id;
+                        return d.id;
+                    });
+                    //entered nodes
+                    var entered = nodeEls.enter().append("li").classed("node", true)
+                        .style("top", parent.y +"px")
+                        .style("opacity", 0)
+                        .style("height", tree.nodeHeight() + "px")
+                        .on("click", function (d) {
+                            toggleChildren(d);
+                            render(data, d);
+                        })
+                        .on("mouseover", function (d) {
+                            d3.select(this).classed("selected", true);
+                        })
+                        .on("mouseout", function (d) {
+                            d3.selectAll(".selected").classed("selected", false);
+                        });
+                    //add arrows if it is a folder
+                    entered.append("span").attr("class", function (d) {
+                        var icon = d.children ? " glyphicon-chevron-down"
+                            : d._children ? "glyphicon-chevron-right" : "";
+                        return "caret glyphicon " + icon;
+                    });
+                    //add icons for folder for file
+                    entered.append("span").attr("class", function (d) {
+                        var icon = d.children || d._children ? "glyphicon-folder-close"
+                            : "glyphicon-file";
+                        return "glyphicon " + icon;
+                    });
+                    //add text
+                    entered.append("span").attr("class", "filename")
+                        .html(function (d) { return d.name; });
+                    //update caret direction
+                    nodeEls.select("span.caret").attr("class", function (d) {
+                        var icon = d.children ? " glyphicon-chevron-down"
+                            : d._children ? "glyphicon-chevron-right" : "";
+                        return "caret glyphicon " + icon;
+                    });
+                    //update position with transition
+                    nodeEls.transition().duration(duration)
+                        .style("top", function (d) { return (d.y - tree.nodeHeight()) + "px";})
+                        .style("left", function (d) { return d.x + "px"; })
+                        .style("opacity", 1);
+                    nodeEls.exit().remove();
+                }
+                render(data, data);
+            });
+        </script>
+    </body>

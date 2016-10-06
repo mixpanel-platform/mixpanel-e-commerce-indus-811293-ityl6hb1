@@ -27,6 +27,7 @@
     <script src="treelist.js"></script>
   </head>
   <body>
+    <tree style='overflow:auto;'></tree>
     <script id="query" type="jql">
       var number_of_days = 30;
       var library = 'iphone';
@@ -91,7 +92,7 @@
               var tree = d3.layout.treelist()
                   .childIndent(10)
                   .nodeHeight(30);
-              var ul = d3.select("body").append("ul").classed("treelist", "true");
+              var ul = d3.select("tree").append("ul").classed("treelist", "true");
 
               function render(data, parent) {
                   var nodes = tree.nodes(data),

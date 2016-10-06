@@ -28,7 +28,7 @@
   </head>
   <body>
     <script id="query" type="jql">
-    var number_of_days = 30;
+      var number_of_days = 30;
       var library = 'iphone';
       var default_props = {"$city":1,"$region":1,"mp_country_code":1,"$brand":1,"$bluetooth_version":1,"$device":1,"$os":1,"$app_release":1,"$app_version":1,"$carrier":1,"$lib_version":1,"$wifi":1,"$screen_width":1,"$screen_height":1,"$model":1,"$os_version":1,"$manufacturer":1,"$screen_dpi":1,"$has_telephone":1,"has_nfc":1,"$bluetooth_enabled":1,"$browser":1,"$initial_referrer":1,"$initial_referring_domain":1,"$referrer":1,"$referring_domain":1,"$browser_version":1,"mp_keyword":1,"$search_engine":1,"utm_source":1,"utm_medium":1,"utm_campaign":1,"utm_content":1,"utm_term":1,"$radio":1,"mp_device_model":1,"$google_play_services":1,"mp_lib":1,"campaign_id":1,"message_id":1,"message_subtype":1,"message_type":1,"$answer_count":1,"survey_id":1,"collection_id":1,"$survey_shown":1,"$watch_model":1,"$ios_ifa":1,"$current_url":1,"$duration":1,"$from_binding":1,"$experiments":1,"$import":1,"distinct_id":1,"time":1,"$has_nfc":1};
       
@@ -66,19 +66,19 @@
           return res;
         })
         .map(item => {
-          var res = {}
+          var res = {name: 'Spec', children:[]}
           _.each(item.value, (propsDict, event) => {
-            res = {
+            res.children.push({
               name: event, 
               children: _.map(propsDict, (types, prop) => ({
                   name: prop, 
                   children:_.map(types, type => ({name:type}) )
                 })
               )
-            };
+            });
           });
           return res
-        });
+        })
       }
     </script>
     <script type="application/javascript">

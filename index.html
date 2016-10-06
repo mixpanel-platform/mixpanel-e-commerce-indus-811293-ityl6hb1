@@ -92,9 +92,8 @@
               debugger
               var tree = d3.layout.treelist()
                   .childIndent(10)
-                  .style("overflow", "scroll")
                   .nodeHeight(30);
-              var ul = d3.select("tree").append("ul").classed("treelist", "true");
+              var ul = d3.select("tree").append("ul").style("overflow", "scroll").classed("treelist", "true");
 
               function render(data, parent) {
                   var nodes = tree.nodes(data),

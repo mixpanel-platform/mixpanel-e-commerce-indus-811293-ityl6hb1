@@ -5,31 +5,26 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/css/reset.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
-    <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
-        <style>
-            .selected{
-                color: orange;
-            }
-            .node {
-                position: absolute;
-                list-style: none;
-                cursor: default;
-            }
-            .node span {
-                margin-right: 3px;
-            }
-            
-            .node .caret {
-                font-size: 10px;
-            }
-        </style>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <style>
+        .selected{
+            color: orange;
+        }
+        .node {
+            position: absolute;
+            list-style: none;
+            cursor: default;
+        }
+        .node span {
+            margin-right: 3px;
+        }
         
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width">
-        <script src="https://d3js.org/d3.v3.min.js"></script>
-        <script type="text/javascript" src="treelist.js"></script>
+        .node .caret {
+            font-size: 10px;
+        }
+    </style>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="treelist.js"></script>
   </head>
   <body>
     <script id="query" type="jql">
@@ -88,7 +83,7 @@
 
     </script>
     <script type="application/javascript">
-            var query = $('.query').html()
+            var query = $('#query').html()
             var id = 0;
             console.log(query)
             d3.json(MP.api.jql(query), function (err, data) {

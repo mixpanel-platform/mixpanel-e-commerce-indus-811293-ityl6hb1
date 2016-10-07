@@ -93,7 +93,11 @@
               var tree = d3.layout.treelist()
                   .childIndent(10)
                   .nodeHeight(30);
-              var ul = d3.select("#tree").append("ul").style("overflow", "scroll").classed("treelist", "true");
+              var ul = d3.select("#tree").append("ul").style("overflow", "scroll").classed("treelist", "true").call(d3.behavior.zoom().on("zoom", function () {
+                svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+              })
+            )
+        .append("g");
 
               function render(data, parent) {
                   var nodes = tree.nodes(data),
